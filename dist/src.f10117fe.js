@@ -117,7 +117,77 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"src/lib/engine.ts":[function(require,module,exports) {
+})({"src/lib/collision.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.collision = void 0; // export function collision(
+//   target: Draw,
+//   index: number,
+//   array: Array<Draw>
+// ): Draw {
+//   array.forEach((point, idx) => {
+//     if (point !== entity && idx <= index) {
+//       if (
+//         entity.x + entity.radius > point.x &&
+//         entity.y + entity.radius > point.y &&
+//         entity.x < point.x + point.radius &&
+//         entity.y < point.y + point.radius
+//       ) {
+//         // console.log("modifying");
+//         // entity.xFlag = -1 * entity.xFlag;
+//         // entity.yFlag = -1 * entity.yFlag;
+//         let tX = entity.xFlag;
+//         let tY = entity.yFlag;
+//         entity.xFlag = point.xFlag;
+//         entity.yFlag = point.yFlag;
+//         point.xFlag = tX;
+//         point.yFlag = tY;
+//         entity.x -= entity.booster;
+//         entity.y -= entity.booster;
+//         point.x += point.booster;
+//         point.y += point.booster;
+//         // point.xFlag = -1 * point.xFlag;
+//         // point.yFlag = -1 * point.yFlag;
+//       }
+//     }
+//   });
+//   return entity;
+// }
+
+function biggerBall(x, y) {
+  if (x.radius > y.radius) return [x, y];
+  return [y, x];
+}
+
+function collision(target, check) {
+  if (target !== check) {
+    if (target.x + target.radius > check.x && target.y + target.radius > check.y && target.x < check.x + check.radius && target.y < check.y + check.radius) {
+      var tX = target.xFlag;
+      var tY = target.yFlag;
+      target.xFlag = check.xFlag;
+      target.yFlag = check.yFlag;
+      check.xFlag = tX;
+      check.yFlag = tY;
+      target.x += (target.radius / 2 + check.radius / 2) * target.xFlag;
+      target.y += (target.radius / 2 + check.radius / 2) * target.yFlag;
+      check.x += (target.radius / 2 + check.radius / 2) * check.xFlag;
+      check.y += (target.radius / 2 + check.radius / 2) * check.yFlag;
+      var bigger = biggerBall(target, check);
+      var timesBigger = Math.floor(bigger[0].radius / bigger[1].radius);
+      bigger[1].booster += timesBigger;
+      bigger[0].booster += 1;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+exports.collision = collision;
+},{}],"src/lib/engine.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -135,6 +205,7 @@ var Draw = function () {
     this.booster = 1;
     this.xFlag = Math.random() < 0.5 ? 1 : -1;
     this.yFlag = Math.random() < 0.5 ? 1 : -1;
+    this.radius = height;
     this.target = document.createElement("div");
     this.target.style.width = width + "px";
     this.target.style.height = height + "px";
@@ -143,10 +214,12 @@ var Draw = function () {
     this.x = Math.floor(Math.random() * window.innerWidth);
     this.y = Math.floor(Math.random() * window.innerHeight);
     this.target.style.transform = "translate(" + (this.x + "px") + ", " + (this.y + "px") + ")";
-    document.body.appendChild(this.target);
+    Draw.root.appendChild(this.target);
 
     this.target.onclick = function () {
-      return _this.booster += 2;
+      _this.booster += 2;
+      _this.xFlag = -1 * _this.xFlag;
+      _this.yFlag = -1 * _this.yFlag;
     };
   }
 
@@ -155,21 +228,40 @@ var Draw = function () {
   };
 
   Draw.prototype.render = function () {
+    if (this.booster > 40) {
+      this.booster = 2;
+    }
+
+    if (this.flag) {
+      this.flag = false;
+      this.target.style.transition = "transform 40ms linear";
+    }
+
     if (this.x <= 0) {
       this.x = window.innerWidth;
+      this.flag = true;
     } else if (this.x >= window.innerWidth) {
       this.x = 0;
+      this.flag = true;
     }
 
     if (this.y <= 0) {
       this.y = window.innerHeight;
+      this.flag = true;
     } else if (this.y >= window.innerHeight) {
       this.y = 0;
+      this.flag = true;
+    }
+
+    if (this.flag) {
+      console.log("reset");
+      this.target.style.transition = "";
     }
 
     this.target.style.transform = "translate(" + ((this.x += this.booster * this.xFlag) + "px") + ", " + ((this.y += this.booster * this.yFlag) + "px") + ")";
   };
 
+  Draw.root = document.querySelector(".root");
   return Draw;
 }();
 
@@ -181,26 +273,65 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var collision_1 = require("./lib/collision");
+
 var engine_1 = require("./lib/engine");
 
 var i = 0;
 var drawEntities = [];
 
-while (i < 50) {
+while (i < 5) {
   var x = Math.floor(Math.random() * 80 + 18);
   drawEntities.push(new engine_1.Draw(x, x));
   i++;
 }
 
+var arr;
+
+function checkIfVisited(tup) {
+  for (var i_1 = 0; i_1 < arr.length; i_1++) {
+    if (tup[0] === arr[i_1][1] && tup[1] === arr[i_1][0]) return true;
+  }
+
+  return false;
+}
+
+var nav = document.querySelector(".nav");
+
+function printSystemChaos(arr) {
+  var x = 0;
+  arr.forEach(function (a) {
+    return x += a.booster;
+  });
+  x = x / arr.length;
+  nav.textContent = x + "";
+}
+
 function gameLoop() {
+  printSystemChaos(drawEntities);
+  arr = [];
+
+  for (var i_2 = 0; i_2 < drawEntities.length; i_2++) {
+    for (var j = 0; j < drawEntities.length; j++) {
+      if (!checkIfVisited([drawEntities[i_2], drawEntities[j]])) {
+        var res = collision_1.collision(drawEntities[i_2], drawEntities[j]);
+
+        if (res) {
+          arr.push([drawEntities[i_2], drawEntities[j]]);
+        }
+      }
+    }
+  }
+
   drawEntities.forEach(function (entity) {
     entity.render();
-  });
+  }); // drawEntities = drawEntities.map(collision);
+
   requestAnimationFrame(gameLoop);
 }
 
 gameLoop();
-},{"./lib/engine":"src/lib/engine.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./lib/collision":"src/lib/collision.ts","./lib/engine":"src/lib/engine.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -228,7 +359,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "32867" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44437" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
