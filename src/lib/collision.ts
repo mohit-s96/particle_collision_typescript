@@ -27,13 +27,13 @@ export function collision(target: Draw, check: Draw): boolean {
       check.x += (target.radius / 2 + check.radius / 2) * check.xFlag;
       check.y += (target.radius / 2 + check.radius / 2) * check.yFlag;
 
-      let bigger = biggerBall(target, check);
+      // let bigger = biggerBall(target, check);
 
-      let timesBigger = Math.floor(bigger[0].radius / bigger[1].radius);
+      // let timesBigger = Math.floor(bigger[0].radius / bigger[1].radius);
 
-      bigger[1].booster += timesBigger;
+      // bigger[1].booster += timesBigger;
 
-      bigger[0].booster += 1;
+      // bigger[0].booster += 1;
 
       return true;
     }
