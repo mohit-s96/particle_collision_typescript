@@ -123,39 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.collision = void 0; // export function collision(
-//   target: Draw,
-//   index: number,
-//   array: Array<Draw>
-// ): Draw {
-//   array.forEach((point, idx) => {
-//     if (point !== entity && idx <= index) {
-//       if (
-//         entity.x + entity.radius > point.x &&
-//         entity.y + entity.radius > point.y &&
-//         entity.x < point.x + point.radius &&
-//         entity.y < point.y + point.radius
-//       ) {
-//         // console.log("modifying");
-//         // entity.xFlag = -1 * entity.xFlag;
-//         // entity.yFlag = -1 * entity.yFlag;
-//         let tX = entity.xFlag;
-//         let tY = entity.yFlag;
-//         entity.xFlag = point.xFlag;
-//         entity.yFlag = point.yFlag;
-//         point.xFlag = tX;
-//         point.yFlag = tY;
-//         entity.x -= entity.booster;
-//         entity.y -= entity.booster;
-//         point.x += point.booster;
-//         point.y += point.booster;
-//         // point.xFlag = -1 * point.xFlag;
-//         // point.yFlag = -1 * point.yFlag;
-//       }
-//     }
-//   });
-//   return entity;
-// }
+exports.collision = void 0;
 
 function biggerBall(x, y) {
   if (x.radius > y.radius) return [x, y];
@@ -280,7 +248,7 @@ var engine_1 = require("./lib/engine");
 var i = 0;
 var drawEntities = [];
 
-while (i < 5) {
+while (i < 10) {
   var x = Math.floor(Math.random() * 80 + 18);
   drawEntities.push(new engine_1.Draw(x, x));
   i++;
@@ -359,7 +327,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44437" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39343" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

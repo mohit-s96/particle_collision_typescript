@@ -4,7 +4,7 @@ import { Draw } from "./lib/engine";
 let i = 0;
 let drawEntities: Array<Draw> = [];
 
-while (i < 5) {
+while (i < 10) {
   let x = Math.floor(Math.random() * 80 + 18);
   drawEntities.push(new Draw(x, x));
   i++;

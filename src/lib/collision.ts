@@ -1,44 +1,5 @@
 import { Draw } from "./engine";
-// export function collision(
-//   target: Draw,
-//   index: number,
-//   array: Array<Draw>
-// ): Draw {
-//   array.forEach((point, idx) => {
-//     if (point !== entity && idx <= index) {
-//       if (
-//         entity.x + entity.radius > point.x &&
-//         entity.y + entity.radius > point.y &&
-//         entity.x < point.x + point.radius &&
-//         entity.y < point.y + point.radius
-//       ) {
-//         // console.log("modifying");
 
-//         // entity.xFlag = -1 * entity.xFlag;
-//         // entity.yFlag = -1 * entity.yFlag;
-//         let tX = entity.xFlag;
-//         let tY = entity.yFlag;
-
-//         entity.xFlag = point.xFlag;
-//         entity.yFlag = point.yFlag;
-
-//         point.xFlag = tX;
-//         point.yFlag = tY;
-
-//         entity.x -= entity.booster;
-//         entity.y -= entity.booster;
-
-//         point.x += point.booster;
-//         point.y += point.booster;
-
-//         // point.xFlag = -1 * point.xFlag;
-//         // point.yFlag = -1 * point.yFlag;
-//       }
-//     }
-//   });
-
-//   return entity;
-// }
 function biggerBall(x: Draw, y: Draw): [Draw, Draw] {
   if (x.radius > y.radius) return [x, y];
   return [y, x];
